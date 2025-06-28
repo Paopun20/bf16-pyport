@@ -67,7 +67,10 @@ def run_program(screen):
             for i in range(16):
                 for j in range(16):
                     val = memory[i*16 + j]
-                    color = (val, val, val)
+                    r = ((val >> 5) & 0x07) * 255 // 7
+                    g = ((val >> 2) & 0x07) * 255 // 7
+                    b = (val & 0x03) * 255 // 3
+                    color = (r, g, b)
                     pygame.draw.rect(screen, color, (j*PIXEL_SCALE, i*PIXEL_SCALE, PIXEL_SCALE, PIXEL_SCALE))
             pygame.display.flip()
             return
@@ -98,21 +101,10 @@ def is_bf_char(a):
 def main():
     import sys
     global program_size
-    fps = 60
-    filename = None
-    # parse arguments
-    for arg in sys.argv[1:]:
-        if arg.startswith('-fps='):
-            try:
-                fps = int(arg.split('=')[1])
-            except Exception:
-                print('Invalid FPS value, using default 60')
-                fps = 60
-        else:
-            filename = arg
-    if not filename:
-        print(f"Usage: {sys.argv[0]} [-fps=NUMBER] <filename>")
+    if len(sys.argv) != 2:
+        print(f"Usage: {sys.argv[0]} <filename>")
         return 1
+    filename = sys.argv[1]
     try:
         with open(filename, 'rb') as f:
             data = f.read()
@@ -176,7 +168,7 @@ def main():
                 running = False
         run_program(screen)
         pygame.display.flip()
-        clock.tick(fps)
+        clock.tick(60)
     pygame.quit()
 
 if __name__ == '__main__':
