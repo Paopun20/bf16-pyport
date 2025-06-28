@@ -162,7 +162,7 @@ def main():
             out.write(struct.pack('B', opcode))
             out.write(struct.pack('<H', arg if 0 <= arg <= 65535 else 0))
     screen = pygame.display.set_mode((WINDOW_SIZE, WINDOW_SIZE))
-    pygame.display.set_caption('bf16_grayscale')
+    pygame.display.set_caption('BF16')
     clock = pygame.time.Clock()
     running = True
     while running:
