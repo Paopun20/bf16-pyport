@@ -12,10 +12,15 @@ current_note = 0
 pygame.mixer.pre_init(SAMPLE_RATE, -16, 1, 512)
 pygame.init()
 
-# ฟังก์ชันเล่นเสียง sine wave ด้วย pygame
 def play_note(pitch):
+    """
+    Plays a musical note with a given pitch.
+
+    Args:
+        pitch (int): The MIDI pitch value of the note to play.
+    """
     freq = 440.0 * (2.0 ** ((pitch - 69.0) / 12.0))
-    duration = 0.166  # ประมาณ 166ms
+    duration = 0.166
     samples = int(SAMPLE_RATE * duration)
     t = np.linspace(0, duration, samples, False)
     envelope = np.ones(samples)
@@ -26,19 +31,16 @@ def play_note(pitch):
     wave = AMPLITUDE * envelope * np.sin(2 * np.pi * freq * t)
     audio = wave.astype(np.int16)
     if len(audio.shape) == 1:
-        audio = np.column_stack((audio, audio))  # make stereo
+        audio = np.column_stack((audio, audio))
     sound = pygame.sndarray.make_sound(audio)
     sound.play()
 
-# program: รายการคำสั่ง Brainfuck (char, int)
 program = []
-# memory: หน่วยความจำ 30000 ช่อง
 memory = [0] * 30000
 program_size = 0
 cursor = 0
 address = 0
 
-# เก็บ key state ล่าสุด
 last_key_state = 0
 
 def run_program(screen):
@@ -68,7 +70,6 @@ def run_program(screen):
             cursor += 1
         elif cmd == ord('.'):
             cursor += 1
-            # วาด memory[0:256] เป็นแถบ pixel
             for i in range(16):
                 for j in range(16):
                     val = memory[i*16 + j]
@@ -78,7 +79,6 @@ def run_program(screen):
             return
         elif cmd == ord(','):
             cursor += 1
-            # รับ input จากคีย์บอร์ด (Z,X,Enter,Space,Up,Down,Left,Right)
             pygame.event.pump()
             keys = pygame.key.get_pressed()
             key = 0
@@ -122,7 +122,7 @@ def main():
             program.append(ch)
             program.append(0)
             if ch == ord('['):
-                bracket_stack.append(len(program) - 2)  # ตำแหน่งของ [
+                bracket_stack.append(len(program) - 2)
             program_size += 2
             i += 1
         elif ch in b'><+-':
@@ -137,12 +137,11 @@ def main():
             i = j
         elif ch == ord(']'):
             program.append(ch)
-            program.append(0)  # จะอัปเดตทีหลัง
+            program.append(0)
             if bracket_stack:
                 open_idx = bracket_stack.pop()
                 close_idx = len(program) - 2
                 dist = close_idx - open_idx
-                # อัปเดต jump distance ทั้ง [ และ ]
                 program[open_idx + 1] = dist
                 program[close_idx + 1] = dist
             else:
@@ -151,10 +150,8 @@ def main():
             i += 1
         else:
             i += 1
-    # ตรวจสอบว่ามี [ ที่ไม่ปิดหรือไม่
     if bracket_stack:
         print('Error: unmatched [ at', bracket_stack)
-    # เขียนไฟล์ program.bin (debug)
     with open('program.bin', 'wb') as out:
         for idx in range(0, program_size, 2):
             opcode = program[idx]
@@ -164,10 +161,9 @@ def main():
                 opcode = 0
             out.write(struct.pack('B', opcode))
             out.write(struct.pack('<H', arg if 0 <= arg <= 65535 else 0))
-    # สร้างหน้าต่าง pygame เพื่อรับ input
     screen = pygame.display.set_mode((WINDOW_SIZE, WINDOW_SIZE))
     pygame.display.set_caption('bf16_grayscale')
-    clock = pygame.time.Clock()  # เพิ่ม clock สำหรับจำกัด FPS
+    clock = pygame.time.Clock()
     running = True
     while running:
         for event in pygame.event.get():
@@ -178,7 +174,8 @@ def main():
             current_note = memory[address]
             play_note(current_note)
         pygame.display.flip()
-        clock.tick(60)  # จำกัดเฟรมเรตที่ 60 FPS
+        print(*("FPS", clock.get_fps()), flush=True)
+        clock.tick(60)
     pygame.quit()
 
 if __name__ == '__main__':

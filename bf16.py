@@ -14,7 +14,7 @@ pygame.init()
 
 def play_note(pitch):
     freq = 440.0 * (2.0 ** ((pitch - 69.0) / 12.0))
-    duration = 0.166  # ประมาณ 166ms
+    duration = 0.166
     samples = int(SAMPLE_RATE * duration)
     t = np.linspace(0, duration, samples, False)
     envelope = np.ones(samples)
@@ -25,7 +25,7 @@ def play_note(pitch):
     wave = AMPLITUDE * envelope * np.sin(2 * np.pi * freq * t)
     audio = wave.astype(np.int16)
     if len(audio.shape) == 1:
-        audio = np.column_stack((audio, audio))  # make stereo
+        audio = np.column_stack((audio, audio))
     sound = pygame.sndarray.make_sound(audio)
     sound.play()
 
@@ -170,8 +170,9 @@ def main():
             current_note = memory[address]
             play_note(current_note)
         pygame.display.flip()
+        print(*("FPS", clock.get_fps()), flush=True)
         clock.tick(60)
     pygame.quit()
 
 if __name__ == '__main__':
-    main() 
+    main()
