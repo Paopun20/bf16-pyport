@@ -63,7 +63,6 @@ def run_program(screen):
             cursor += 1
         elif cmd == ord('.'):
             cursor += 1
-            play_note(69)
             for i in range(16):
                 for j in range(16):
                     val = memory[i*16 + j]
@@ -100,7 +99,7 @@ def is_bf_char(a):
 
 def main():
     import sys
-    global program_size
+    global program_size, current_note
     if len(sys.argv) != 2:
         print(f"Usage: {sys.argv[0]} <filename>")
         return 1
@@ -167,6 +166,8 @@ def main():
             if event.type == pygame.QUIT:
                 running = False
         run_program(screen)
+        if memory[address] != current_note:
+            current_note = memory[address]
         pygame.display.flip()
         clock.tick(60)
     pygame.quit()
