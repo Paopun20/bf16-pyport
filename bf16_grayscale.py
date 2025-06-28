@@ -1,6 +1,4 @@
-import math
-import struct
-import pygame
+import struct, pygame
 import numpy as np
 
 WINDOW_SIZE = 512
