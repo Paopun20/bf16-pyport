@@ -168,6 +168,7 @@ def main():
         run_program(screen)
         if memory[address] != current_note:
             current_note = memory[address]
+            play_note(current_note)
         pygame.display.flip()
         clock.tick(60)
     pygame.quit()
