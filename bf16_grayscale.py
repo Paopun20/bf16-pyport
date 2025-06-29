@@ -172,7 +172,7 @@ def main():
             current_note = memory[address]
             play_note(current_note)
         pygame.display.flip()
-        print(*("FPS", clock.get_fps()), flush=True)
+        # print(*("FPS", clock.get_fps()), flush=True) # debug
         clock.tick(60)
     pygame.quit()
 
