@@ -4,3 +4,4 @@ bf16_grayscale
 oldC/*
 program.bin
 .vscode/*
+__pycache__
