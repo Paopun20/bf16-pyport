@@ -46,13 +46,12 @@ def run_program(screen: pygame.Surface):
             for i in range(16):
                 for j in range(16):
                     val = memory[i * 16 + j]
-                    pygame.draw.rect(screen, bf16color.grayscale(val), (j * PIXEL_SCALE, i * PIXEL_SCALE, PIXEL_SCALE, PIXEL_SCALE))
+                    pygame.draw.rect(screen, bf16color.rainbow(val), (j * PIXEL_SCALE, i * PIXEL_SCALE, PIXEL_SCALE, PIXEL_SCALE))
             pygame.display.flip()
             return
         elif cmd == ord(','):
             cursor += 1
-            memory[address] = bf16input.get_key_state()
-            last_key_state = bf16input.get_key_state()
+            memory[address] = last_key_state = bf16input.get_key_state()
         elif cmd == ord('?'):
             cursor += 1
             print(f"memory[{address}]: {memory[address]}")

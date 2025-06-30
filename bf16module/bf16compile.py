@@ -62,3 +62,24 @@ class bf16compile:
                 arg = self.program[idx + 1]
                 out.write(struct.pack('B', opcode))
                 out.write(struct.pack('<H', arg if 0 <= arg <= 65535 else 0))
+
+    def read_bin(self, filename: str):
+        """
+        Reads a compiled program from a binary file.
+        """
+        self.program = []
+        self.program_size = 0
+        with open(filename, 'rb') as f:
+            while True:
+                opcode_byte = f.read(1)
+                if not opcode_byte:
+                    break
+                opcode = struct.unpack('B', opcode_byte)[0]
+                arg_bytes = f.read(2)
+                if not arg_bytes:
+                    break
+                arg = struct.unpack('<H', arg_bytes)[0]
+                self.program.append(opcode)
+                self.program.append(arg)
+                self.program_size += 2
+        return self.program
