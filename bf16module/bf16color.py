@@ -14,8 +14,8 @@ class bf16color:
 
     @staticmethod
     def binary_bw(val):
-        # Black if <128, White if ≥128
-        return (0, 0, 0) if val < 128 else (255, 255, 255)
+        # Black if <127.5, White if ≥128
+        return (0, 0, 0) if val < 127.5 else (255, 255, 255)
 
     @staticmethod
     def redscale(val):

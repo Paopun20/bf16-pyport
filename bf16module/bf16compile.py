@@ -52,21 +52,14 @@ class bf16compile:
         return self.program
 
     def write_bin(self, filename: str):
-        """
-        Writes the compiled program to a binary file.
-        Must be called after compile().
-        """
         with open(filename, 'wb') as out:
             for idx in range(0, self.program_size, 2):
                 opcode = self.program[idx]
                 arg = self.program[idx + 1]
                 out.write(struct.pack('B', opcode))
-                out.write(struct.pack('<H', arg if 0 <= arg <= 65535 else 0))
+                out.write(struct.pack('<H', arg))
 
     def read_bin(self, filename: str):
-        """
-        Reads a compiled program from a binary file.
-        """
         self.program = []
         self.program_size = 0
         with open(filename, 'rb') as f:
@@ -83,3 +76,24 @@ class bf16compile:
                 self.program.append(arg)
                 self.program_size += 2
         return self.program
+
+    def uncompile(self, filename: str) -> list[int]:
+        self.read_bin(filename)  # โหลดโปรแกรมจากไฟล์
+    
+        result = []
+        i = 0
+        while i < len(self.program):
+            cmd = self.program[i]
+            arg = self.program[i + 1]
+    
+            if cmd in (ord('.'), ord(','), ord('?'), ord('['), ord(']')):
+                # คำสั่งเดี่ยว ๆ เก็บ opcode เข้า list
+                result.append(cmd)
+            elif cmd in (ord('>'), ord('<'), ord('+'), ord('-')):
+                # ขยายคำสั่งซ้ำตาม arg แล้วเก็บ opcode ทีละตัว
+                result.extend([cmd] * arg)
+            else:
+                print(f"Warning: Unknown opcode {cmd} encountered during uncompilation.")
+            i += 2
+    
+        return result

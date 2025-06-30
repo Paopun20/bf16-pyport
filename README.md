@@ -1,6 +1,4 @@
-# BF16 - Python Port | **Visual Brainfuck Runtime**
-
-<br>A **Python port** of [p2r3's bf16](https://github.com/p2r3/bf16) and more cool features and lower spaghetti code</br>
+# BF16 - Python Compiler | **Visual Brainfuck Runtime**
 
 ---
 
