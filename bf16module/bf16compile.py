@@ -76,24 +76,3 @@ class bf16compile:
                 self.program.append(arg)
                 self.program_size += 2
         return self.program
-
-    def uncompile(self, filename: str) -> list[int]:
-        self.read_bin(filename)  # โหลดโปรแกรมจากไฟล์
-    
-        result = []
-        i = 0
-        while i < len(self.program):
-            cmd = self.program[i]
-            arg = self.program[i + 1]
-    
-            if cmd in (ord('.'), ord(','), ord('?'), ord('['), ord(']')):
-                # คำสั่งเดี่ยว ๆ เก็บ opcode เข้า list
-                result.append(cmd)
-            elif cmd in (ord('>'), ord('<'), ord('+'), ord('-')):
-                # ขยายคำสั่งซ้ำตาม arg แล้วเก็บ opcode ทีละตัว
-                result.extend([cmd] * arg)
-            else:
-                print(f"Warning: Unknown opcode {cmd} encountered during uncompilation.")
-            i += 2
-    
-        return result
