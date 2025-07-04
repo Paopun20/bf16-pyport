@@ -6,3 +6,4 @@ oldC/*
 .vscode/*
 __pycache__
 *.bf16c
+bf16cord.py

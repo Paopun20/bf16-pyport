@@ -12,6 +12,7 @@ PIXEL_SCALE = 512 // 16
 
 program = []
 memory = [0] * MEMORY_SIZE
+display_image = [[0] * 16 for _ in range(16)]
 cursor = 0
 address = 0
 tick = 0
@@ -57,6 +58,7 @@ def run_program(screen: pygame.Surface, color: callable):
             for i, j in product(range(16), repeat=2):
                 val = memory[i * 16 + j]
                 pygame.draw.rect(screen, color(val), (j * PIXEL_SCALE, i * PIXEL_SCALE, PIXEL_SCALE, PIXEL_SCALE))
+                display_image[i][j] = val
             return
         elif cmd == ord(','):
             cursor += 1
