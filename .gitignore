@@ -5,3 +5,4 @@ oldC/*
 *.bin
 .vscode/*
 __pycache__
+*.bf16c
