@@ -4,7 +4,7 @@ import sys
 import time
 import threading
 from itertools import product
-import cv2
+import a
 
 # --- Environment Setup ---
 os.environ["PYGAME_HIDE_SUPPORT_PROMPT"] = "1"  # Hide "Hello from the pygame community"
@@ -13,10 +13,10 @@ os.environ["PYGAME_HIDE_SUPPORT_PROMPT"] = "1"  # Hide "Hello from the pygame co
 import pygame
 
 # --- Local Modules ---
-from bf16module.bf16compile import bf16compile
-from bf16module.bf16color import bf16color
-from bf16module.bf16audio import bf16audio
-from bf16module.bf16input import bf16input
+from bf16module.utilities.compile.bf16compile import bf16compile
+from bf16module.utilities.colors.bf16color import bf16color
+from bf16module.utilities.sound.bf16audio import bf16audio
+from bf16module.utilities.input.bf16input import bf16input
 
 # --- Config ---
 WINDOW_SIZE = 512
@@ -98,9 +98,6 @@ def main():
     filename = sys.argv[2]
     compiler = bf16compile()
 
-    record_video = False
-    video_writer = None
-
     if command == "compile":
         if not filename.endswith(".b"):
             print("Compile only supports .b files")
@@ -124,8 +121,6 @@ def main():
                 color_arg = arg[6:].lower()
             elif arg.startswith("showfps="):
                 showfps_arg = arg[8:].lower()
-            elif arg.startswith("record="):
-                record_video = arg[7:].lower() in ["1", "true", "yes", "on", "y"]
 
         if not color_arg:
             print("Missing color= argument")
@@ -163,12 +158,6 @@ def main():
         pygame.display.set_caption("BF16")
         clock = pygame.time.Clock()
 
-        # Setup video writer if recording
-        if record_video:
-            fourcc = cv2.VideoWriter_fourcc(*'mp4v')  # หรือ 'XVID' ถ้า mp4v ใช้ไม่ได้
-            video_writer = cv2.VideoWriter("output.mp4", fourcc, 60.0, (WINDOW_SIZE, WINDOW_SIZE))
-            print("Recording video to output.mp4...")
-
         # Reset state
         memory = [0] * MEMORY_SIZE
         cursor = 0
@@ -190,22 +179,11 @@ def main():
 
             pygame.display.flip()
 
-            if record_video and video_writer:
-                frame = pygame.surfarray.array3d(screen)  # shape: (width, height, 3)
-                frame = frame.swapaxes(0, 1)  # Rotate axes to (height, width, 3)
-                frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
-                video_writer.write(frame)
-
             if memory[address] != current_note:
                 current_note = memory[address]
                 bf16audio.play_note(current_note)
 
             clock.tick(60)
-
-        # Release video writer
-        if video_writer:
-            video_writer.release()
-            print("Video saved to output.mp4")
 
         pygame.quit()
 

@@ -76,3 +76,67 @@ class bf16compile:
                 self.program.append(arg)
                 self.program_size += 2
         return self.program
+    
+    def is_v2_bin(self, filename: str) -> bool:
+        with open(filename, 'rb') as f:
+            magic = f.read(4)
+            if magic != b'BF16':
+                return False
+            version = struct.unpack('<B', f.read(1))[0]
+            return version == 2 
+    
+    def write_bin_v2(self, filename: str, color_mode: str="rgb332", app_name: str="UNNAMED BF16"):
+        with open(filename, 'wb') as out:
+            # Write header
+            out.write(b'BF16')  # Magic number
+            out.write(struct.pack('<B', 2))  # Version (e.g., 2 for this new format)
+
+            # Write metadata lengths
+            out.write(struct.pack('<B', len(color_mode)))
+            out.write(struct.pack('<B', len(app_name)))
+
+            # Write metadata
+            out.write(color_mode.encode('utf-8'))
+            out.write(app_name.encode('utf-8'))
+
+            # Write program
+            for idx in range(0, self.program_size, 2):
+                opcode = self.program[idx]
+                arg = self.program[idx + 1]
+                out.write(struct.pack('B', opcode))
+                out.write(struct.pack('<H', arg))
+                
+    def read_bin_v2(self, filename: str) -> tuple[list[int], str, str]:
+        self.program = []
+        self.program_size = 0
+        color_mode = ""
+        app_name = ""
+
+        with open(filename, 'rb') as f:
+            magic = f.read(4)
+            if magic != b'BF16':
+                raise ValueError("Invalid BF16 binary file (magic number mismatch)")
+
+            version = struct.unpack('<B', f.read(1))[0]
+            if version != 2:
+                raise ValueError(f"Unsupported BF16 binary version: {version}. Expected 2.")
+
+            color_mode_len = struct.unpack('<B', f.read(1))[0]
+            app_name_len = struct.unpack('<B', f.read(1))[0]
+
+            color_mode = f.read(color_mode_len).decode('utf-8')
+            app_name = f.read(app_name_len).decode('utf-8')
+
+            while True:
+                opcode_byte = f.read(1)
+                if not opcode_byte:
+                    break
+                opcode = struct.unpack('B', opcode_byte)[0]
+                arg_bytes = f.read(2)
+                if not arg_bytes:
+                    break
+                arg = struct.unpack('<H', arg_bytes)[0]
+                self.program.append(opcode)
+                self.program.append(arg)
+                self.program_size += 2
+        return self.program, color_mode, app_name
