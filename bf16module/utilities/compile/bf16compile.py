@@ -1,6 +1,6 @@
 import struct
 
-class bf16compile:
+class BF16compile:
     def __init__(self):
         self.program = []
         self.program_size = 0

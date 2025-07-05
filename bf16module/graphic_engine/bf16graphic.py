@@ -1,81 +1,49 @@
 import pygame
 
-class bf16graphic:
+class BF16graphic:
     WIDTH = 16
     HEIGHT = 16
-    PIXEL_SCALE = 32  # 16x32 = 512 window
-    _INIT = False
-    _screen = None
-    _surface = None
+    PIXEL_SCALE = 32  # 16 * 32 = 512
 
-    @staticmethod
-    def init():
-        if not bf16graphic._INIT:
-            pygame.init()
-            bf16graphic._screen = pygame.display.set_mode(
-                (bf16graphic.WIDTH * bf16graphic.PIXEL_SCALE, bf16graphic.HEIGHT * bf16graphic.PIXEL_SCALE)
-            )
-            bf16graphic._surface = pygame.Surface((bf16graphic.WIDTH, bf16graphic.HEIGHT))
-            pygame.display.set_caption("BF16 Graphics")
-            bf16graphic._INIT = True
+    def __init__(self, screen: pygame.Surface):
+        self.screen = screen
 
-    @staticmethod
-    def draw_pixels(memory: list[int], color_func: callable):
-        """Draw 16x16 pixels from memory[0..255] using a color function."""
-        bf16graphic.init()
-        for y in range(bf16graphic.HEIGHT):
-            for x in range(bf16graphic.WIDTH):
-                i = y * bf16graphic.WIDTH + x
-                val = memory[i]
-                color = color_func(val)
-                rect = pygame.Rect(
-                    x * bf16graphic.PIXEL_SCALE,
-                    y * bf16graphic.PIXEL_SCALE,
-                    bf16graphic.PIXEL_SCALE,
-                    bf16graphic.PIXEL_SCALE,
-                )
-                pygame.draw.rect(bf16graphic._screen, color, rect)
+    def clear(self):
+        self.screen.fill((0, 0, 0))
+        self.update()
 
-        pygame.display.flip()
-
-    @staticmethod
-    def clear():
-        bf16graphic.init()
-        bf16graphic._screen.fill((0, 0, 0))
-        pygame.display.flip()
-
-    @staticmethod
-    def draw_grid(color=(40, 40, 40)):
-        bf16graphic.init()
-        for x in range(bf16graphic.WIDTH):
+    def draw_grid(self, color=(40, 40, 40)):
+        for x in range(self.WIDTH):
             pygame.draw.line(
-                bf16graphic._screen,
+                self.screen,
                 color,
-                (x * bf16graphic.PIXEL_SCALE, 0),
-                (x * bf16graphic.PIXEL_SCALE, bf16graphic.HEIGHT * bf16graphic.PIXEL_SCALE),
+                (x * self.PIXEL_SCALE, 0),
+                (x * self.PIXEL_SCALE, self.HEIGHT * self.PIXEL_SCALE),
             )
-        for y in range(bf16graphic.HEIGHT):
+        for y in range(self.HEIGHT):
             pygame.draw.line(
-                bf16graphic._screen,
+                self.screen,
                 color,
-                (0, y * bf16graphic.PIXEL_SCALE),
-                (bf16graphic.WIDTH * bf16graphic.PIXEL_SCALE, y * bf16graphic.PIXEL_SCALE),
+                (0, y * self.PIXEL_SCALE),
+                (self.WIDTH * self.PIXEL_SCALE, y * self.PIXEL_SCALE),
             )
-        pygame.display.flip()
 
-    @staticmethod
-    def draw_text(text: str, x: int, y: int, color=(255, 255, 255), font_size=18):
-        bf16graphic.init()
+    def draw_box(self, x, y, width, height, color=(255, 255, 255)):
+        pygame.draw.rect(self.screen, color, (x, y, width, height))
+
+    def draw_text(self, text: str, x: int, y: int, color=(255, 255, 255), font_size=18):
         font = pygame.font.SysFont("Arial", font_size)
         text_surface = font.render(text, True, color)
-        bf16graphic._screen.blit(text_surface, (x, y))
+        self.screen.blit(text_surface, (x, y))
+
+    def draw_line(self, x1, y1, x2, y2, color=(255, 255, 255), width=1):
+        pygame.draw.line(self.screen, color, (x1, y1), (x2, y2), width)
+
+    def update(self):
         pygame.display.flip()
 
-    @staticmethod
-    def update():
-        pygame.display.flip()
-
-    @staticmethod
-    def close():
-        pygame.quit()
-        bf16graphic._INIT = False
+    class THREED:
+        def draw_cube(self, screen, x, y, z, size, color=(255, 255, 255)):
+            iso_x = (x - z) * 0.707 + self.WIDTH * self.PIXEL_SCALE / 2
+            iso_y = (y + z) * 0.707 + self.HEIGHT * self.PIXEL_SCALE / 2
+            pygame.draw.rect(screen, color, (iso_x, iso_y, size, size), 2)

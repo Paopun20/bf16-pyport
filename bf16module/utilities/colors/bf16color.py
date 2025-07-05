@@ -1,4 +1,4 @@
-class bf16color:
+class BF16color:
     @staticmethod
     def rgb332(val):
         r = ((val >> 5) & 0x07) * 255 // 7

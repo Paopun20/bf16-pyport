@@ -7,7 +7,8 @@
 - **Python** 3.10+
 - **Pip packages**:
   ```bash
-  pip install pygame numpy
+  pip install -r requirements.txt
+
   ```
 
 ## Usage

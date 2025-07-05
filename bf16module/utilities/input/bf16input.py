@@ -1,6 +1,6 @@
 import pygame
 
-class bf16input:
+class BF16input:
     """
     Reads key state and maps it to an 8-bit input value.
     Returns:

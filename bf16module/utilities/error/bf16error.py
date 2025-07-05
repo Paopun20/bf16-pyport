@@ -1,7 +1,7 @@
-class bf16error(RuntimeError):
+class BF16error(RuntimeError):
     """Custom error for BF16 interpreter."""
     pass
 
-class bf16warning(RuntimeWarning):
+class BF16warning(RuntimeWarning):
     """Custom warning for BF16 interpreter."""
     pass
