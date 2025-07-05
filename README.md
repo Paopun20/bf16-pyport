@@ -28,11 +28,6 @@ Convert `.b` source to `.bf16c` bytecode:
 
 ----------------------------------------
 
-🧮 Launch Calculator
-    python bf16.py --calc
-
-----------------------------------------
-
 💡 Notes
 
 .b = raw Brainfuck source  
