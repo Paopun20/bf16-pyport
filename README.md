@@ -24,7 +24,12 @@
 🛠️ Compile BF16 Program
 
 Convert `.b` source to `.bf16c` bytecode:
-    python bf16.py compile examples/hello.b -o hello.bf16c --color rgb332 --appname "Hello App"
+
+compile v1:
+    python .\bf16.py compile .\examples\badapple.b
+
+compile v2 (experimental):
+    python .\bf16.py compile .\examples\badapple.b --use_v2_compile --color grayscale --appname "Bad Apple"
 
 ----------------------------------------
 
